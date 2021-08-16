@@ -1,0 +1,19 @@
+根据几何关系可得：
+\[
+    x_0 = \frac{a^2}{c} - \frac{a(h + r)}{c}\ ;
+    \ y = \sqrt{b^2 - \frac{b^2}{a^2}x^2}
+\]
+根据开普勒第三定律：
+\begin{quotation}
+    \itshape
+    绕同一中心天体的所有行星的轨道的半长轴的三次方（$a^3$）跟它的公转周期的二次方（$T^2$）
+    的比值都相等，即 $\frac{a^3}{T^2} = k$ ，$k = \frac{GM}{4\pi ^2} $（其中 $M$ 为
+    中心天体质量，$k$ 为开普勒常数，这是一个只与被绕星体有关的常量，$G$ 为引力常量，其2006年
+    国际推荐数值为 $G = 6.67428 × 10_{11}N·m^2/kg^2$）。
+\end{quotation}
+将
+我们可以得出探测器与火星的连线从远火点到两器分离时扫过的面积为：
+\[
+    \int_{\scriptstyle -a}^{\scriptstyle\frac{\scriptstyle \ a^2}{\scriptstyle c} -
+    \scriptstyle\frac{\scriptstyle a(h + r)}{\scriptstyle c}} \sqrt{b^2 - \frac{b^2}{a^2}x^2} \,dx
+\]
