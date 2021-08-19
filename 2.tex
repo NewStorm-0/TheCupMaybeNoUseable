@@ -15,6 +15,8 @@
 \usepackage{listings}
 \usepackage{appendix}
 \usepackage{color}
+\usepackage{ltxtable}
+\usepackage{caption}
 
 \geometry{a4paper,centering}
 \renewcommand\cftdot{·}
@@ -123,10 +125,16 @@
     \item 降落伞脱除时：高度 $0km$ 时，速度不大于 $95m/s$;
 \end{itemize}
 
-
-针对问题二，我们只需要在第一问的基础上进行一些修改即可。只要在其中加入消耗的能量的计算，然后再通过蒙
+针对问题二，我们只需要在第一问的基础上进行一些修改并且在其中加入消耗的能量的计算即可。然后再通过蒙
 特卡洛法来取得数据。在在一定误差内符合给定时间的数据中比较出消耗能量最少的数据，从而得到相应的操控方
 案。
+
+第三问要求决策方案与公开资料尽可能一致，于是我们在第一问和第二问的模型的基础上进行简单的修改，保留
+原有的多数基本限制条件，并将为了趋近时间最短和耗能最小的限制去除。在新模型中，模型目标变为各个时间
+段的误差值之和 $\sum\Delta t_i$​ 最小，在不以最短时间和最小能耗为目标的条件下，模型的蒙特卡洛枚举
+范围增大，且去掉了部分预处理内容。由于公开资料中，具体时间被划分为三个部分：气动减速段，伞降减速
+段，动力减速段，因此我们只考虑 $t_2$，$t_3+t_4$，$t_5$ 与真实数据的差值，通过不断迭代更新获取差
+值之和的最小值，并记录下最优方案的各个节点高度 $ansh_i$ 和各个阶段时长 $anst_i$。
 \section{模型建立}
 \subsection{模型假设}
 \subsubsection{降落轨道假设}
@@ -134,9 +142,9 @@
 我们只考虑探测器和火星在一个平面内的运动，所以只需建立一个如图 \ref{pic:syt0} 平面直角坐
 标系即可。为了便于探测器的运行轨道的描述和计算，我们以探测器向火星降落的椭圆轨道的中心为原
 点，从轨道中心到火星的方向为 x 轴正方向建系。以此坐标系来讨论从同步轨道出发到两器分离的情况。
-\begin{figure}[hb]
+\begin{figure}[ht!]
     \centering
-    \includegraphics[scale=0.5]{建系示意图0.pdf}
+    \includegraphics[scale=0.45]{建系示意图0.pdf}
     \caption{平面直角坐标系示意图}
     \label{pic:syt0}
 \end{figure}
@@ -253,6 +261,7 @@ $8.314472J/(K·mol)$。$T$ 为大气绝对温度，单位为 $K$。$M$ 为大气
     \hline
     $m_{\text{hide}}$  & 背罩的质量，为 $245.3kg$                               \\
     \hline
+    \caption{模型符号说明}
 \end{longtable}
 \subsection{开始建立}
 \subsubsection{两器分离阶段}
@@ -471,67 +480,49 @@ $
     t_{\text{ansj}} = t_{k=\text{ans}_i,j}~
     (j=1,2,3,..6)
 \end{gather*}
-
-经过不同步长的迭代，最终得到最优解 $t_{\text{ans}} = 20032.969s$。此时部分变量的取值为：
-\begin{table}[h]
-    \centering
-    \begin{tabularx}{14cm}{|c|*{4}{>{\centering\arraybackslash}X|}}
-        \hline
-        \textbf{变量} & $h$           & $h_1$         & $h_2$    & $h_3$       \\
-        \hline
-        \textbf{取值} & $100000.000m$ & $17027.305km$ & $0.000m$ & $4000.000m$ \\
-        \hline
-    \end{tabularx}
-
-    \smallskip
-    \smallskip
-    \begin{tabularx}{14cm}{|c|*{4}{>{\centering\arraybackslash}X|}}
-        \hline
-        \textbf{变量} & $h_4$       & $h_5$      & $h_6$      & $x_0$         \\
-        \hline
-        \textbf{取值} & $2936.500m$ & $111.300m$ & $111.300m$ & $11769.961km$ \\
-        \hline
-    \end{tabularx}
-
-    \smallskip
-    \smallskip
-    \begin{tabularx}{14cm}{|c|*{4}{>{\centering\arraybackslash}X|}}
-        \hline
-        \textbf{变量} & $y_0$        & $T_1$        & $S$                      & $S_1$ \\
-        \hline
-        \textbf{取值} & $1272.740km$ & $39473.636s$ & $1.557\times 10^{14}m^2$ &
-        $3.116\times 10^{14}m^2$                                                       \\
-        \hline
-    \end{tabularx}
-
-    \smallskip
-    \smallskip
-    \begin{tabularx}{14cm}{|c|*{4}{>{\centering\arraybackslash}X|}}
-        \hline
-        \textbf{变量} & $v_0$       & $t_1$        & $t_2$      & $t_3$    \\
-        \hline
-        \textbf{取值} & $4.572km/s$ & $19721.532s$ & $261.325s$ & $9.070s$ \\
-        \hline
-    \end{tabularx}
-
-    \smallskip
-    \smallskip
-    \begin{tabularx}{14cm}{|c|*{4}{>{\centering\arraybackslash}X|}}
-        \hline
-        \textbf{变量} & $t_4$     & $t_5 + t_6$ & $a$           & $b$          \\
-        \hline
-        \textbf{取值} & $40.877s$ & $0.165s$    & $11909.853km$ & $8328.404km$ \\
-        \hline
-    \end{tabularx}
-\end{table}
+经过不同步长的迭代，最终得到最优解 $t_{\text{ans}} = 20032.969s$。此时部分变量的取值如
+表 \ref{tab:0}。
+\LTXtable{14cm}{表1}
 
 \subsection{第二问的解}
-消耗的能量主要集中在最后的悬停成像阶段。所以我们仍可以使用之前的方法，只需要在最后一阶段---悬停成像
-阶段中加入对消耗的能量的计算。此时，悬停成像阶段的递推公式变为：
-\newpage
-\nocite{Shiye}
-\bibliography{math}
+第二问的研究范围同第一问一样，都是探测器从同步轨道出发到巡视器在火星表面上方悬停。所以我们可以在第
+一问的模型基础上进行适度修改：
+\begin{enumerate}
+    \item 本问并不追求缩短时间的消耗，所以需要对 $h_3$ 在一定范围内利用蒙特卡洛法来确定数值。
+    \item 消耗的能量主要集中在最后的悬停成像阶段。所以我们仍可以使用之前的方法，只需要在最后
+          一阶段---悬停成像阶段中加入对消耗的能量的计算。
+    \item 为了减少能量的消耗，巡视器的发动机应该在背罩分离后立刻全力开启以减速。因为如果巡视
+          器在发动机开启之前进行加速下降的话，那么发动机需要消耗更多能量来减速。所以 $h_5 = h_6$。
+          如果发动机不是一直最大推力开启的话，那么巡视器会下降更多距离，更多的重力势能会转化为
+          动能，抵消这些能量会消耗更多的燃料。
+\end{enumerate}
 
+经计算获得：在发动机开启后的这段时间中，阻力做功 $W_f$ 远小于发动机做功 $W_E$ 和重力做功
+$W_G$。因此，在发动机即将开启的时刻，利用能量守恒定理，使用当前的速度 $v_x$，$v_y$ 及高度差
+$h-h_{100m}$ ​计算获得这一阶段发动机的能耗 $E$：
+\begin{equation*}
+    \begin{split}
+        E &= \frac{1}{2}(v_x^2+v_y^2)\times (m-m_{\text{floor}}-m_{\text{para}}-m_{\text{hide}}) \\
+        &\quad + (m-m_{\text{floor}}-m_{\text{para}}-m_{\text{hide}})\times g\times (hh-100)
+    \end{split}
+\end{equation*}
+
+通过计算我们得到总降落时长和能耗的关系如图 \ref{pic:ans2} 所示。
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[scale=0.6]{问题2图像.pdf}
+    \caption{总降落时长和能量消耗关系图}
+    \label{pic:ans2}
+\end{figure}
+我们还算出了两组对于给定时长所得出的能量消耗最少的方案。第一组给定的着陆过程时间为 $20200s$，
+具体数值如表 \ref{tab:1} 所示。第二组给定的着陆过程时间为 $20100s$，具体数值如表
+\ref{tab:2} 所示。
+\LTXtable{14cm}{表2}
+\LTXtable{14cm}{表3}
+\newpage
+\nocite{庞之浩2021}
+\nocite{黄翔宇2021}
+\bibliography{references}
 \section*{附录}
 \addcontentsline{toc}{section}{附录}
 \appendix
@@ -546,7 +537,7 @@ $
     numberstyle=\footnotesize,
     breaklines=true,
     postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}
-    }
+}
 \begin{lstlisting}[language=Matlab]
 %经过多次变步长，可以得到以下代码
 clear;
@@ -889,5 +880,400 @@ ansh4
 ansh5
 ansh6
 
+\end{lstlisting}
+
+\section{第二问MATLAB代码}
+\subsection{求解代码}
+\lstset{
+    basicstyle=\sffamily,
+    keywordstyle=\bfseries,
+    commentstyle=\rmfamily\itshape,
+    stringstyle=\ttfamily,
+    columns=flexible,
+    numbers=left,
+    numberstyle=\footnotesize,
+    breaklines=true,
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}
+}
+\begin{lstlisting}[language=Matlab]
+clear;
+clc;
+
+%目标时间：单位（秒）
+t = 20100; %本处为输入的t值
+wucha = 0.5;
+Emin = 99999999;
+
+T = @(hh) -31 - 0.000998 * hh; %温度
+phi = @(p, t) p / (0.1921 * (t + 273.15)); %密度
+p = @(hh) 0.699 * exp(-0.00009 * hh); %压强
+q = @(pho, v) 0.5 * pho * v^2; %动压
+
+M = 6.4171 * 10^23;
+R = 3396.2 * 1000;
+G = 6.67 * (10^(-11));
+g = M * G / (R^2);
+
+T0 = 24 * 60 * 60 + 37 * 60 + 22.7; %同步轨道的周期
+h1 = ((M * G * (T0^2)) / (4 * (pi^2)))^(1/3) - R;
+
+m = 1285;
+m_floor = 89.6; %火星着陆探测进入与减速段动力学问题研究
+m_hide = 245.3;
+m_para = 38;
+S_floor = 2^2 * pi;
+S_para = 114;
+
+t1 = 0;
+t2 = 0;
+t3 = 0;
+t4 = 0;
+t5 = 0;
+anst1 = -1;
+anst2 = -1;
+anst3 = -1;
+anst4 = -1;
+anst5 = -1;
+ansh4 = 0;
+ansh3 = 0;
+ansh2 = 0;
+ansh = 0;
+%hmax = 4700;%待会计算完了进行更改
+%hmin = 3990;%待会计算完了进行更改
+hhmin = inf;
+
+%clear all, clc;
+%h1 = h1;
+for h2 = 0:10000:100000
+    %椭圆轨道的几何关系
+    a = (h1 + h2 + 2 * R) / 2;
+    c = (h1 - h2) / 2;
+    b = sqrt(a^2 - c^2);
+    T1 = 2 * pi * ((a^3) / (M * G))^(1/2); %椭圆轨道的周期
+    diffk = @(x) -(b^2 * x) / (a^2 * (b^2 - (b^2 * x^2) / a^2)^(1/2)); %y对于x的求导函数
+
+    for h = 100000:10000:200000
+        %t1部分:
+        x0 = abs((a^2 / c) - (a * (h + R)) / c);
+        y = @(x)sqrt(abs(b^2 - (x .* b ./ a).^2));
+        S = integral(y, -a, x0) - 0.5 * (x0 - c) * sqrt(y(x0));
+        S_ = pi * a * b;
+        t1 = S / S_ * T1;
+
+        %t2部分
+        t2 = 0;
+        hh = h;
+        dh = 100;
+        k = diffk(x0);
+        theta = acos((x0 - c + y(x0) * k) / (sqrt(x0^2 - 2 * x0 * c + c^2 + y(x0)^2) * sqrt(1 + k^2))) - pi / 18;
+        v_0 = 2^(1/2) * ((G * M * (R + h1)) / ((R + h) * (2 * R + h + h1)))^(1/2);
+        v_yy = sin(0.5 * pi - theta) * v_0;
+        v_xx = cos(0.5 * pi - theta) * v_0;
+
+        hh2 = hh;
+        hmax = 0;
+        hmin = inf;
+        v_yy2 = v_yy; v_xx2 = v_xx;
+
+        while hh2 >= 0
+            v_y2 = sqrt(v_yy2^2 + 2 * g * dh - phi(p(hh2), T(hh2)) * sqrt(v_yy2^2 + v_xx2^2) * S_floor * dh * v_yy2 / m);
+
+            if abs(v_y2) < 1
+                v_y2 = 1;
+            end
+
+            v_x2 = sqrt(v_xx2^2 - phi(p(hh2), T(hh2)) * sqrt(v_xx2^2 + v_yy2^2) * S_floor * dh * v_xx2^2 / (m * v_yy2));
+
+            if abs(v_x2) < 1
+                v_x2 = 1;
+            end
+
+            hh2 = hh2 - dh;
+            v_yy2 = v_y2;
+            v_xx2 = v_x2;
+            vc = sqrt(1.29 * (T(hh2) + 273.15) * 8.314472 * 1000/43.34);
+            mahe = sqrt(v_x2^2 + v_y2^2) / vc;
+            p_move = q(phi(p(hh2), T(hh2)), sqrt(v_xx2^2 + v_yy2^2));
+
+            if mahe >= 1.6 && mahe <= 2.3 % && p_move <= 850 && p_move >= 250
+                hmin = min(hmin, hh2);
+                hmax = max(hmax, hh2);
+            end
+
+        end
+
+        hmax = min(hmax, 15000);
+        hmin = max(hmin, 4000);
+
+        if hmax < hmin
+            continue
+        end
+
+        for h3 = hmin:100:hmax
+
+            while hh >= h3
+                flagt2 = 10086;
+                v_y = sqrt(v_yy^2 + 2 * g * dh - phi(p(hh), T(hh)) * sqrt(v_yy^2 + v_xx^2) * S_floor * dh * v_yy / m);
+
+                if abs(v_y) < 1
+                    v_y = 1;
+                end
+
+                v_x = sqrt(v_xx^2 - phi(p(hh), T(hh)) * sqrt(v_xx^2 + v_yy^2) * S_floor * dh * v_xx^2 / (m * v_yy));
+
+                if abs(v_x) < 1
+                    v_x = 1;
+                end
+
+                hh = hh - dh;
+                t2 = t2 + dh / ((v_y + v_yy) / 2);
+                v_yy = v_y;
+                v_xx = v_x;
+            end
+
+            %t3部分
+            t3 = 0;
+
+            while sqrt(v_yy^2 + v_xx^2) > 95
+                %到速度减小到一定值时可以丢走降落伞,但这只是一个大的限制条件，更进一步的条件是马赫数
+                v_y = sqrt(v_yy^2 + 2 * g * dh - phi(p(hh), T(hh)) * sqrt(v_yy^2 + v_xx^2) * (S_floor + S_para) * dh * v_yy / m);
+
+                if abs(v_y) < 1
+                    v_y = 1;
+                end
+
+                v_x = sqrt(v_xx^2 - phi(p(hh), T(hh)) * sqrt(v_xx^2 + v_yy^2) * (S_floor + S_para) * dh * v_xx^2 / (m * v_yy));
+
+                if abs(v_x) < 1
+                    v_x = 1;
+                end
+
+                hh = hh - dh;
+                t3 = t3 + dh / ((v_y + v_yy) / 2);
+                v_yy = v_y;
+                v_xx = v_x;
+                vc = sqrt(1.29 * (T(hh) + 273.15) * 8.314472 * 1000/43.34);
+                mahe = sqrt(v_x^2 + v_y^2) / vc;
+                %没错就是这里马赫数起到真正的限制作用,达到之后就可以丢掉大底了
+                if mahe <= 0.6
+                    h4 = hh;
+                    break
+                end
+
+            end
+
+            dh = 1;
+            tmp_hh = hh;
+
+            if t1 + t2 + t3 > t + wucha
+                continue
+            end
+
+            %h5为抛掉降落伞的高度取值范围为100到h4
+
+            for h5 = 100:10:h4
+                %t4部分
+                hh = tmp_hh;
+                t4 = 0;
+
+                while hh >= h5
+                    tmpvy2 = v_yy^2 + 2 * g * dh - phi(p(hh), T(hh)) * sqrt(v_yy^2 + v_xx^2) * (S_floor + S_para) * dh * v_yy / (m - m_floor);
+
+                    if tmpvy2 < 1
+                        tmpvy2 = 1;
+                    end
+
+                    v_y = sqrt(tmpvy2);
+                    tmpvx2 = v_xx^2 - phi(p(hh), T(hh)) * sqrt(v_xx^2 + v_yy^2) * (S_floor + S_para) * dh * v_xx^2 / ((m - m_floor) * v_yy);
+
+                    if tmpvx2 < 0.1
+                        tmpvx2 = 0;
+                    end
+
+                    v_x = sqrt(tmpvx2);
+                    hh = hh - dh;
+                    dt = dh / ((v_y + v_yy) / 2);
+                    t4 = t4 + dt;
+                    flag2 = 1;
+                    v_yy = v_y;
+                    v_xx = v_x;
+                end
+
+                if (v_yy^2 + v_xx^2) >= 95^2
+                    continue;
+                end
+
+                tmp_hh2 = hh;
+
+                for h6 = h5:1:h5
+                    v_yy3 = v_yy;
+                    v_xx3 = v_xx;
+                    %t5部分预处理
+                    hh = tmp_hh2;
+                    %开发动机之前
+                    while hh >= h6
+                        tmpvy32 = v_yy3^2 + 2 * g * dh - phi(p(hh), T(hh)) * sqrt(v_yy3^2 + v_xx3^2) * (S_floor + S_para) * dh * v_yy3 / (m - m_floor - m_para - m_hide);
+
+                        if tmpvy32 < 1
+                            tmpvy32 = 1;
+                        end
+
+                        v_y3 = sqrt(tmpvy32);
+                        tmpvx32 = v_xx3^2 - phi(p(hh), T(hh)) * sqrt(v_xx3^2 + v_yy3^2) * (S_floor + S_para) * dh * v_xx3^2 / ((m - m_floor - m_para - m_hide) * v_yy3);
+
+                        if tmpvx32 < 0.1
+                            tmpvx32 = 0;
+                        end
+
+                        v_x3 = sqrt(tmpvx32);
+                        hh = hh - dh;
+                        v_yy3 = v_y3;
+                        v_xx3 = v_x3;
+                    end
+
+                    while hh >= 100
+                        tmpvy32 = v_yy3^2 + 2 * g * dh - phi(p(hh), T(hh)) * sqrt(v_yy3^2 + v_xx3^2) * S_floor * dh * v_yy3 / (m - m_floor - m_para - m_hide) - 2 * 7500 * dh * v_yy3 / ((m - m_floor - m_para - m_hide) * sqrt(v_yy3^2 + v_xx3^2));
+                        tmpvx32 = v_xx3^2 - phi(p(hh), T(hh)) * sqrt(v_yy3^2 + v_xx3^2) * S_floor * dh * v_xx3^2 / (v_yy3 * (m - m_floor - m_para - m_hide)) - 2 * 7500 * dh * v_xx3^2 / (v_yy3 * sqrt(v_yy3^2 + v_xx3^2) * (m - m_floor - m_para - m_hide));
+
+                        if tmpvy32 < 1 && tmpvx32 < 1
+                            hhmin = min(hhmin, h6);
+                            break;
+                        end
+
+                        v_y3 = sqrt(tmpvy32);
+                        v_x3 = sqrt(tmpvx32);
+                        hh = hh - dh;
+                        v_yy3 = v_y3;
+                        v_xx3 = v_x3;
+                    end
+
+                    if v_yy3 > 1 || v_xx3 > 0
+                        continue
+                    end
+
+                end
+
+                %t5部分正式计算
+
+                %开发动机的时间和抛掉降落伞的时间一致，并且最终速度减小到0.
+
+                t5 = 0;
+                dh = 0.1;
+                hh = tmp_hh2;
+                %开发动机之前
+                while hh >= hhmin
+                    tmpvy2 = v_yy^2 + 2 * g * dh - phi(p(hh), T(hh)) * sqrt(v_yy^2 + v_xx^2) * (S_floor + S_para) * dh * v_yy / (m - m_floor - m_para - m_hide);
+
+                    if tmpvy2 < 1
+                        tmpvy2 = 1;
+                    end
+
+                    v_y = sqrt(tmpvy2);
+                    tmpvx2 = v_xx^2 - phi(p(hh), T(hh)) * sqrt(v_xx^2 + v_yy^2) * (S_floor + S_para) * dh * v_xx^2 / ((m - m_floor - m_para - m_hide) * v_yy);
+
+                    if tmpvx2 < 1
+                        tmpvx2 = 1;
+                    end
+
+                    v_x = sqrt(tmpvx2);
+                    hh = hh - dh;
+                    dt = dh / ((v_y + v_yy) / 2);
+                    t5 = t5 + dt;
+                    v_yy = v_y;
+                    v_xx = v_x;
+                end
+
+                %开发动机之后
+                E = (v_xx^2 + v_yy^2) * (m - m_floor - m_para - m_hide) / 2 + (m - m_floor - m_para - m_hide) * g * hh;
+
+                while hh >= 100
+                    tmpvy2 = v_yy^2 + 2 * g * dh - phi(p(hh), T(hh)) * sqrt(v_yy^2 + v_xx^2) * S_floor * dh * v_yy / (m - m_floor - m_para - m_hide) - 2 * 7500 * dh * v_yy / ((m - m_floor - m_para - m_hide) * sqrt(v_yy^2 + v_xx^2));
+                    tmpvx2 = v_xx^2 - phi(p(hh), T(hh)) * sqrt(v_yy^2 + v_xx^2) * S_floor * dh * v_xx^2 / (v_yy * (m - m_floor - m_para - m_hide)) - 2 * 7500 * dh * v_xx^2 / (v_yy * sqrt(v_yy^2 + v_xx^2) * (m - m_floor - m_para - m_hide));
+
+                    if tmpvy2 < 1
+                        tmpvy2 = 1;
+                    end
+
+                    v_y = sqrt(tmpvy2);
+
+                    if tmpvx2 < 1
+                        tmpvx2 = 1;
+                    end
+
+                    v_x = sqrt(tmpvx2);
+                    dt = dh / ((v_y + v_yy) / 2);
+                    t5 = t5 + dt;
+                    hh = hh - dh;
+                    v_yy = v_y;
+                    v_xx = v_x;
+                end
+
+                if t1 == 0 || t2 == 0 || t3 == 0 || t4 == 0 || t5 == 0
+                    continue
+                end
+
+                tmpt = t1 + t2 + t3 + t4 + t5
+                delta_t = abs(tmpt - t);
+
+                if delta_t <= wucha && E < Emin
+                    answerT = tmpt;
+                    ansh6 = h6;
+                    ansh5 = h5;
+                    ansh4 = h4;
+                    ansh3 = h3;
+                    ansh2 = h2;
+                    ansh = h;
+                    anshh = hh;
+                    anst1 = t1;
+                    anst2 = t2;
+                    anst3 = t3;
+                    anst4 = t4;
+                    anst5 = t5;
+                    Emin = E;
+                    %1+1
+                end
+
+            end
+
+        end
+
+    end
+
+end
+
+answerT
+ansh2 %近火点的高度
+ansh %进入大气的高度
+ansh3 %开启降落伞的高度
+anst1
+anst2
+anst3
+anst4
+anst5
+ansh4
+ansh5
+ansh6
+Emin    
+\end{lstlisting}
+\subsection{绘图代码}
+\lstset{
+    basicstyle=\sffamily,
+    keywordstyle=\bfseries,
+    commentstyle=\rmfamily\itshape,
+    stringstyle=\ttfamily,
+    columns=flexible,
+    numbers=left,
+    numberstyle=\footnotesize,
+    breaklines=true,
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}
+}
+\begin{lstlisting}[language=Matlab]
+clc,clear;
+x0=20100:20:20300;
+y0=[4.439506026125528e+06 4.323742755370141e+06 4.181132954992451e+06 4.089111711446583e+06 3.999406693658655e+06 3.963666765054225e+06 3.959624858401800e+06 3.959624858401800e+06 3.959624858401800e+06 3.959624858401800e+06 3.959624858401800e+06]
+cx=20100:0.1:20300;
+y=interp1(x0,y0,cx,'spline');
+plot(cx,y,'k')
+xlabel('时间t（秒）'),ylabel('耗能E（焦耳）')
 \end{lstlisting}
 \end{document}
